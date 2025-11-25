@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-service
+spec:
+  selector:
+    app: frontend
+  ports:
+    - port: 80        # port exposé du service
+      targetPort: 80  # port dans le pod où nginx écoute
+      nodePort: 30083 # si tu utilises NodePort
+  type: NodePort
+

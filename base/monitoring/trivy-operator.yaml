@@ -1,0 +1,88 @@
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: trivy-operator
+  namespace: trivy
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: trivy-operator
+rules:
+  - apiGroups: [""]
+    resources: ["pods", "replicasets", "replicationcontrollers", "statefulsets", "daemonsets", "jobs", "cronjobs"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["apps"]
+    resources: ["deployments"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["aquasecurity.github.io"]
+    resources: ["vulnerabilityreports", "configauditreports"]
+    verbs: ["get", "list", "watch", "create", "update", "delete"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: trivy-operator
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: trivy-operator
+subjects:
+  - kind: ServiceAccount
+    name: trivy-operator
+    namespace: trivy
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: trivy-operator
+  namespace: trivy
+  labels:
+    app: trivy-operator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: trivy-operator
+  template:
+    metadata:
+      labels:
+        app: trivy-operator
+    spec:
+      serviceAccountName: trivy-operator
+      containers:
+        - name: trivy-operator
+          image: ghcr.io/aquasecurity/trivy-operator:0.22.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+              name: metrics
+            - containerPort: 9090
+              name: probes
+          env:
+            - name: OPERATOR_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: OPERATOR_TARGET_WORKLOADS
+              value: "pod,replicaset,deployment,statefulset,daemonset,cronjob,job"
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: probes
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: probes
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: tmp
+          emptyDir: {}

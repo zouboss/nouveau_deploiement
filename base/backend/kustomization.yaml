@@ -1,0 +1,22 @@
+# base/backend/kustomization.yaml
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - deployment.yaml
+  - service.yaml
+  - configmap.yaml  # Si vous avez un configmap spécifique
+  - secret.yaml     # Si vous avez un secret spécifique
+
+generatorOptions:
+  disableNameSuffixHash: false
+
+configMapGenerator:
+  - name: app-config
+    files:
+      - config.properties
+
+secretGenerator:
+  - name: postgres-secret
+    literals:
+      - POSTGRES_PASSWORD=zou123
