@@ -11,12 +11,12 @@ resources:
 generatorOptions:
   disableNameSuffixHash: false
 
-configMapGenerator:
-  - name: app-config
-    files:
-      - config.properties
+#configMapGenerator:
+  #- name: app-config
+    #files:
+      #- config.properties
 
 secretGenerator:
-  - name: postgres-secret
+  - name: secret
     literals:
       - POSTGRES_PASSWORD=zou123
