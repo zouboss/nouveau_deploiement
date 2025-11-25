@@ -9,6 +9,6 @@ resources:
   
   - configmap-node-exporter.yaml
   - ingress-prometheus.yaml
-  - postgres-exporter-deployment.yaml
+  #- postgres-exporter-deployment.yaml
   - prometheus-configmap.yaml
   - prometheus-deployment.yaml
