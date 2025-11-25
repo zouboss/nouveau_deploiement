@@ -5,7 +5,7 @@ kind: Kustomization
 resources:
   - deployment.yaml
   - service.yaml
-  - configmap.yaml  # Si vous avez un configmap spécifique
+  #- configmap.yaml  # Si vous avez un configmap spécifique
   - secret.yaml     # Si vous avez un secret spécifique
 
 generatorOptions:
