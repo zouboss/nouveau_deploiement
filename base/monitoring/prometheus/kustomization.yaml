@@ -1,15 +1,14 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
+# CORRECTION : liste tous les fichiers YAML individuellement
 resources:
- -configmap-node-exporter.yaml
- -ingress-prometheus.yaml
- -postgres-exporter-deployment.yaml
- -prometheus-configmap.yaml
- -prometheus-deployment.yaml
- -alertmanager-configmap.yaml
- -alertmanager-deplyement.yaml
- -alert-rules.yaml
- -alert-rules-deployment.yaml
-
-
+  - alertmanager-configmap.yaml
+  - alertmanager-deployment.yaml
+  - alert-rules-deployment.yaml
+  - alert-rules.yaml
+  - configmap-node-exporter.yaml
+  - ingress-prometheus.yaml
+  - postgres-exporter-deployment.yaml
+  - prometheus-configmap.yaml
+  - prometheus-deployment.yaml
